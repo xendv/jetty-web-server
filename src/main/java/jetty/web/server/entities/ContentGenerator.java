@@ -1,4 +1,4 @@
-package jetty.web.server;
+package jetty.web.server.entities;
 
 import jetty.web.server.entities.Product;
 import jetty.web.server.entities.ProductsDBManager;

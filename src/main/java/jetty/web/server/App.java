@@ -1,5 +1,6 @@
 package jetty.web.server;
 
+import jetty.web.server.entities.ContentGenerator;
 import jetty.web.server.handlers.SecurityHandlerBuilder;
 import jetty.web.server.servlets.ContentServlet;
 import jetty.web.server.servlets.HelperServlet;

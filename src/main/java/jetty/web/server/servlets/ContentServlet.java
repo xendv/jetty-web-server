@@ -1,6 +1,6 @@
 package jetty.web.server.servlets;
 
-import jetty.web.server.ContentGenerator;
+import jetty.web.server.entities.ContentGenerator;
 import jetty.web.server.entities.Product;
 import jetty.web.server.entities.ProductsDBManager;
 import org.eclipse.jetty.http.HttpStatus;
@@ -34,7 +34,7 @@ public final class ContentServlet extends HttpServlet implements Servlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try (ServletOutputStream outputStream = resp.getOutputStream()) {
             outputStream.write(contentGenerator.content().getBytes(StandardCharsets.UTF_8));
             outputStream.flush();
@@ -44,7 +44,7 @@ public final class ContentServlet extends HttpServlet implements Servlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         //resp.setContentType("text/plain");
         final var id = req.getParameter("id");
         final var name = req.getParameter("name");
