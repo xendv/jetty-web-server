@@ -1,0 +1,44 @@
+###
+GET http://localhost:3466/
+
+###
+OPTIONS http://localhost:3466/
+
+###
+GET http://localhost:3466
+Authorization: Basic admin admin
+
+###
+GET http://localhost:3466/products
+Authorization: Basic admin admin
+
+###
+GET http://localhost:3466/help
+Authorization: Basic admin admin
+
+###
+POST http://localhost:3466/products
+Authorization: Basic admin admin
+Content-Type: application/x-www-form-urlencoded
+
+id=999&name=NewProduct&quantity=90000&man_id=999999
+
+###
+GET http://localhost:3466
+Authorization: Basic user user
+
+###
+GET http://localhost:3466/products
+Authorization: Basic user user
+
+###
+GET http://localhost:3466/help
+Authorization: Basic user user
+
+###
+POST http://localhost:3466/products
+Authorization: Basic user user
+Content-Type: application/x-www-form-urlencoded
+
+id=999&name=NewProduct&quantity=90000&man_id=999999
+
