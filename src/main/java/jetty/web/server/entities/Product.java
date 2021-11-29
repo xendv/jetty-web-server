@@ -3,6 +3,7 @@ package jetty.web.server.entities;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 @Data
 public class Product {
     int id;
@@ -10,6 +11,12 @@ public class Product {
     String name;
     int manufacturer_id;
     int quantity;
+
+    public Product(@NotNull String name, int manufacturer_id, int quantity){
+        this.name = name;
+        this.manufacturer_id = manufacturer_id;
+        this.quantity = quantity;
+    }
 
     public Product(int id, @NotNull String name, int manufacturer_id, int quantity){
         this.id = id;

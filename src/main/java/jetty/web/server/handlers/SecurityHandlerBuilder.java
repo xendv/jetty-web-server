@@ -9,36 +9,28 @@ import org.eclipse.jetty.util.security.Constraint;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SecurityHandlerBuilder {
+public final class SecurityHandlerBuilder {
     private static final String ROLE_MANAGER = "manager";
     private static final String ROLE_GUEST = "guest";
+    private final Collection<String> GET_HEAD_OPTIONS = Arrays.asList("GET","HEAD", "OPTIONS");
 
     private final ConstraintSecurityHandler securityHandler = new ConstraintSecurityHandler();
+
     public ConstraintSecurityHandler build(LoginService loginService) {
         securityHandler.setLoginService(loginService);
 
         final List<ConstraintMapping> constraintMappings = new ArrayList<>();
 
         constraintMappings.addAll(constraintMethodsMapping(
-                buildConstraint(ROLE_MANAGER),
-                Collections.singletonList("/"),
-                Arrays.asList("GET", "POST")
-        ));
-        constraintMappings.addAll(constraintMethodsMapping(
-                buildConstraint(ROLE_GUEST),
-                Collections.singletonList("/"),
-                Collections.singletonList("GET")
+                buildConstraint(ROLE_MANAGER, ROLE_GUEST),
+                Arrays.asList("/", "/products"),
+                GET_HEAD_OPTIONS
         ));
 
         constraintMappings.addAll(constraintMethodsMapping(
                 buildConstraint(ROLE_MANAGER),
-                Collections.singletonList("/products"),
-                Arrays.asList("GET", "POST")
-        ));
-        constraintMappings.addAll(constraintMethodsMapping(
-                buildConstraint(ROLE_GUEST),
-                Collections.singletonList("/products"),
-                Collections.singletonList("GET")
+                Arrays.asList("/", "/products"),
+                Collections.singletonList("POST")
         ));
 
         securityHandler.setConstraintMappings(constraintMappings);
@@ -78,6 +70,4 @@ public class SecurityHandlerBuilder {
                         }
                 ).collect(Collectors.toList());
     }
-
-
 }

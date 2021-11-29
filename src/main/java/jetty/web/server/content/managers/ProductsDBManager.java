@@ -1,7 +1,7 @@
-package jetty.web.server.entities;
+package jetty.web.server.content.managers;
 
 import jetty.web.server.dao.ProductDAO;
-import jetty.web.server.initializers.DBFlywayInitializer;
+import jetty.web.server.entities.Product;
 import jetty.web.server.initializers.JDBCSettingsProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,19 +11,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductsDBManager {
+public final class ProductsDBManager {
     public static final @NotNull
     JDBCSettingsProvider JDBC_SETTINGS = JDBCSettingsProvider.DEFAULT;
 
-    ProductDAO productDAO;
-
-    private
-    Connection connection;
+    private ProductDAO productDAO;
 
     public ProductsDBManager(){
         try (Connection connection = DriverManager.getConnection(JDBC_SETTINGS.url(), JDBC_SETTINGS.login(), JDBC_SETTINGS.password())) {
-            this.connection = connection;
-            DBFlywayInitializer.initDBFlyway();
             productDAO = new ProductDAO(connection);
         }
         catch (SQLException exception) {
@@ -34,8 +29,7 @@ public class ProductsDBManager {
     public List<Product> getAllProducts(){
         List<Product> productsList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(JDBC_SETTINGS.url(), JDBC_SETTINGS.login(), JDBC_SETTINGS.password())) {
-            this.connection = connection;
-            productDAO = new ProductDAO(connection);
+            productDAO.setConnection(connection);
             productsList = productDAO.all();
         }
         catch (SQLException exception) {
@@ -44,10 +38,9 @@ public class ProductsDBManager {
         return productsList;
     }
 
-    public void addProduct(Product product){
+    public void addNewProduct(Product product){
         try (Connection connection = DriverManager.getConnection(JDBC_SETTINGS.url(), JDBC_SETTINGS.login(), JDBC_SETTINGS.password())) {
-            this.connection = connection;
-            productDAO = new ProductDAO(connection);
+            productDAO.setConnection(connection);
             productDAO.save(product);
         }
         catch (SQLException exception) {

@@ -1,21 +1,19 @@
 package jetty.web.server.servlets;
 
-import jetty.web.server.entities.ContentGenerator;
+import jetty.web.server.content.managers.ContentGenerator;
+import jetty.web.server.content.managers.ProductsDBManager;
 import jetty.web.server.entities.Product;
-import jetty.web.server.entities.ProductsDBManager;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public final class ContentServlet extends HttpServlet implements Servlet {
+public final class ContentServlet extends BaseHttpServlet implements Servlet {
     private final ContentGenerator contentGenerator;
     private ServletConfig servletConfig;
 
@@ -40,28 +38,25 @@ public final class ContentServlet extends HttpServlet implements Servlet {
             outputStream.flush();
             resp.setStatus(HttpStatus.OK_200);
         }
-
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        //resp.setContentType("text/plain");
-        final var id = req.getParameter("id");
         final var name = req.getParameter("name");
         final var quantity = req.getParameter("quantity");
         final var manufacturersId = req.getParameter("man_id");
-        if (id == null || quantity == null || name == null || manufacturersId == null ) {
+        if (name == null || quantity == null || manufacturersId == null ) {
             resp.setStatus(HttpStatus.BAD_REQUEST_400);
             return;
         }
+
         ProductsDBManager productsDBManager = new ProductsDBManager();
-        productsDBManager.addProduct(new Product(
-                Integer.parseInt(id), name, Integer.parseInt(manufacturersId), Integer.parseInt(quantity)));
+        productsDBManager.addNewProduct(new Product(
+                name, Integer.parseInt(manufacturersId), Integer.parseInt(quantity)
+                ));
 
         resp.setStatus(HttpStatus.OK_200);
-        //resp.sendRedirect(req.getContextPath() +"/products");
-        doGet(req, resp);
-
+        resp.sendRedirect(req.getContextPath() +"/products");
     }
 
     @Override

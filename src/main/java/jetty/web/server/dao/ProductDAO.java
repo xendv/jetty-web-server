@@ -2,57 +2,49 @@ package jetty.web.server.dao;
 
 import jetty.web.server.entities.Product;
 import org.jetbrains.annotations.NotNull;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
+import static db.jooq.generated.Tables.PRODUCTS;
+
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class ProductDAO{
+    private final String ID_SEQ_NAME = "products_id_seq";
 
-    private final @NotNull
-    Connection connection;
-
-    final String getAllProductsQuery = "SELECT * FROM products";
-    final String saveProductQuery = "INSERT INTO products (id,name,manufacturer_id,quantity) VALUES(?,?,?,?)";
+    protected DSLContext context;
 
     public ProductDAO(@NotNull Connection connection) {
-        this.connection = connection;
+        setConnection(connection);
+    }
+
+    public void setConnection(@NotNull Connection connection) {
+        this.context = DSL.using(connection, SQLDialect.POSTGRES);
     }
 
     @NotNull
     public List<Product> all() {
-        final List<Product> result = new ArrayList<>();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(getAllProductsQuery)) {
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    result.add(new Product(resultSet.getInt("id"),
-                            resultSet.getString("name"),
-                            resultSet.getInt("manufacturer_id"),
-                            resultSet.getInt("quantity")));
-                }
-                return result;
-            }
-        }
-        catch (SQLException e) {
-            System.out.println(e.getErrorCode());
-            System.out.println(e.getSQLState());
-            System.out.println(e.getLocalizedMessage());
-        }
-        return result;
+        return context.select().from(PRODUCTS).fetchInto(Product.class);
     }
 
     public void save(@NotNull Product entity) {
-        try(PreparedStatement preparedStatement = connection.prepareStatement(saveProductQuery)){
-            preparedStatement.setInt(1, entity.getId());
-            preparedStatement.setString(2, entity.getName());
-            preparedStatement.setInt(3, entity.getManufacturer_id());
-            preparedStatement.setInt(4, entity.getQuantity());
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        entity.setId(context.nextval(ID_SEQ_NAME).intValue());
+        var rec = context.newRecord(PRODUCTS, entity);
+        rec.store();
+    }
+
+    // for future use, may be modified
+    public void update(@NotNull Product entity) {
+        var rec = context.newRecord(PRODUCTS, entity);
+        rec.refresh();
+    }
+
+    public void delete(@NotNull Product entity) {
+        var rec = context.newRecord(PRODUCTS, entity);
+        if (context.executeDelete(rec) == 0)
+            throw new IllegalStateException("No record found");
     }
 }

@@ -1,6 +1,6 @@
 CREATE TABLE products
 (
-    id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY NOT NULL,
     name varchar(100) NOT NULL,
     manufacturer_id INTEGER NOT NULL,
     quantity INTEGER NOT NULL

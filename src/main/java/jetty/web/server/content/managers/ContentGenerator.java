@@ -1,7 +1,6 @@
-package jetty.web.server.entities;
+package jetty.web.server.content.managers;
 
 import jetty.web.server.entities.Product;
-import jetty.web.server.entities.ProductsDBManager;
 
 import java.util.List;
 import java.util.stream.Collectors;

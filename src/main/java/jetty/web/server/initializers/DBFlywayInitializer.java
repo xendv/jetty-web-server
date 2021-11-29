@@ -4,7 +4,7 @@ import org.flywaydb.core.Flyway;
 import org.gradle.internal.impldep.com.esotericsoftware.minlog.Log;
 import org.jetbrains.annotations.NotNull;
 
-public class DBFlywayInitializer {
+public final class DBFlywayInitializer {
     public static final @NotNull
     JDBCSettingsProvider JDBC_SETTINGS = JDBCSettingsProvider.DEFAULT;
 

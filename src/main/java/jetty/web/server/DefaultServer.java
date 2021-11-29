@@ -1,10 +1,10 @@
 package jetty.web.server;
 
-import jetty.web.server.entities.ContentGenerator;
+import jetty.web.server.content.managers.ContentGenerator;
 import jetty.web.server.handlers.SecurityHandlerBuilder;
 import jetty.web.server.servlets.ContentServlet;
 import jetty.web.server.servlets.HelperServlet;
-import jetty.web.server.servlets.MyServlet;
+import jetty.web.server.servlets.DefaultPageServlet;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.LoginService;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 
 @SuppressWarnings({"NotNullNullableValidation", "FieldCanBeLocal"})
-public class DefaultServer {
+public final class DefaultServer {
     private final Server server = new Server();
     private static final int port = 3466;
 
@@ -36,22 +36,17 @@ public class DefaultServer {
         return server;
     }
 
-    public void setUp(){
+    private void setUp(){
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         context.setContextPath("/");
         try {
             final URL resource = LoginService.class.getResource("/static");
 
             context.setBaseResource(Resource.newResource(resource.toExternalForm()));
-
-            context.addServlet(new ServletHolder("DefaultContentServlet", new MyServlet()), "/");
+            context.addServlet(new ServletHolder("DefaultPageServlet", new DefaultPageServlet()), "/");
             context.addServlet(new ServletHolder("HelperServlet", new HelperServlet()), "/help");
-            context.addServlet(
-                    new ServletHolder("ContentServlet",
-                            new ContentServlet(new ContentGenerator())
-                    ),
-                    "/products"
-            );
+            context.addServlet(new ServletHolder("ContentServlet",
+                    new ContentServlet(new ContentGenerator())), "/products");
 
             server.setHandler(context);
             final String hashConfig = App.class.getResource("/hash_config").toExternalForm();

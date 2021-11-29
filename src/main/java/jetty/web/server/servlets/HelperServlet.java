@@ -1,27 +1,15 @@
 package jetty.web.server.servlets;
 
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.gradle.internal.impldep.com.google.common.io.Resources;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
-public class HelperServlet extends DefaultServlet {
+public final class HelperServlet extends BaseHttpServlet {
+
     @Override
-    public void service(ServletRequest request,
-                        ServletResponse response) throws IOException {
-        try (ServletOutputStream outputStream = response.getOutputStream()) {
-            final URL mainPage = MyServlet.class.getResource("/static/pages/help");
-            if (mainPage != null){
-                final String content = Resources.toString(mainPage, StandardCharsets.UTF_8);
-                outputStream.write(content.getBytes());
-            }
-            outputStream.flush();
-        }
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        super.doGet(req, resp, "/static/pages/help");
     }
 
     @Override
